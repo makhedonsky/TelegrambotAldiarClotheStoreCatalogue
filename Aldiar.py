@@ -2,7 +2,7 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher 
 from aiogram.utils import executor 
 from aiogram.utils.callback_data import CallbackData
-from keyboard import cd, main_menu, partner_menu, share_menu, catalog_menu, women_category_menu, men_category_menu, women_shoes_menu, men_shoes_menu,women_Outerwear,men_Outerwear, men_pants, women_pants, Women_Accessories, Men_Accessories
+from inline import cd, main_menu, partner_menu, share_menu, catalog_menu, women_category_menu, men_category_menu, women_shoes_menu, men_shoes_menu,women_Outerwear,men_Outerwear, men_pants, women_pants, Women_Accessories, Men_Accessories
 
 import os 
 
