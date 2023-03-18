@@ -15,8 +15,10 @@ TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
 class FSM_admin(StatesGroup):
 
 	photo = State()
-	category_menu = State()
-	clothes = State()
+	gender = State()
+	category1 = State()
+	category2 = State()
+	name = State()
 	price = State()
 
 storage = MemoryStorage()
@@ -72,21 +74,55 @@ async def photo_fsm(message:types.Message,state:FSMContext):
 	await message.answer("теперь выбери категорию",reply_markup = men_women())
 	await FSM_admin.next()
 
-@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.category_menu)
-async def category_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
+@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.gender)
+async def gender_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
 	async with state.proxy() as data:
-		data["category_menu"] = callback.data
-	await callback.message.answer("теперь выбери какой тип одежды")
+		data["gender"] = callback.data
+	print(callback.data)
+
+	await callback.message.answer("теперь выбери какой тип одежды",reply_markup =category_one())
 	await FSM_admin.next()
 
-@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.category_menu)
-async def category_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
+@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.gender)
+async def gender_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
 	async with state.proxy() as data:
-		data["category_menu"] = callback.data
+		data["gender"] = callback.data
+	print(callback.data)
 
-	await callback.message.answer("теперь выбери какой тип одежды")
+	await callback.message.answer("теперь выбери какой тип одежды",reply_markup =category_one())
 	await FSM_admin.next()
 
+@dp.callback_query_handler(cd.filter(action = "FSM_shoes"),state = FSM_admin.category1)
+async def category1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = callback.data
+	print(callback.data)
+	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_shoes())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "FSM_Outerwear"),state = FSM_admin.category1)
+async def category1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = callback.data
+	print(callback.data)
+	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_outerwear())
+	await FSM_admin.next()   
+
+@dp.callback_query_handler(cd.filter(action = "FSM_Pants"),state = FSM_admin.category1)
+async def category1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = callback.data
+	print(callback.data)
+	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_pants())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "FSM_Accessories"),state = FSM_admin.category1)
+async def category1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = callback.data
+	print(callback.data)
+	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_accessories())
+	await FSM_admin.next()
 
 @dp.callback_query_handler(cd.filter(action = "count"))
 async def count_cmd(callback:types.CallbackQuery):
