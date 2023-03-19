@@ -2,27 +2,17 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher 
 from aiogram.utils import executor 
 from aiogram.utils.callback_data import CallbackData
-from keyboard import *
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
+from inline import *
 
 import os 
 
-TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
-
-
-class FSM_admin(StatesGroup):
-
-	photo = State()
-	gender = State()
-	category1 = State()
-	category2 = State()
-	name = State()
-	price = State()
+#TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
 
 storage = MemoryStorage()
-bot = Bot(TOKEN)
+bot = Bot(token=os.getenv('TOKEN'))
 dp = Dispatcher(bot,storage = storage)
 
 async def on_startup(_):
@@ -35,6 +25,15 @@ HELP = """
 	Партнерам - если есть предложение для сотрудничество,
 	Опубликовать товар - что то будет делать
 """
+
+class FSM_admin(StatesGroup):
+	photo = State()
+	gender = State()
+	category1 = State()
+	category2 = State()
+	name = State()
+	price = State()
+
 
 @dp.message_handler(commands = ["start"])
 async def start_cmd(message:types.Message):
@@ -57,72 +56,7 @@ async def partner_cmd(callback:types.CallbackQuery):
 							ссылки из раздела \" Получить портнерскую ссылку \"Максимальная скидка но одну товарную позицию 1000р. \
 							При стоимость товорной позиции более 20 000р максиальная скидка 2000р ", reply_markup = partner_menu())
 
-@dp.callback_query_handler(cd.filter(action = 'new_goods'))
-async def new_goods_cmd(callback:types.Message,state:FSMContext):
-	await callback.message.answer('отправьте фото товара ')
-	await FSM_admin.photo.set()
 
-@dp.message_handler(lambda message: not message.photo,state = FSM_admin.photo)
-async def check_photo(message:types.Message):
-	await message.answer("это не фото")
-
-@dp.message_handler(lambda message: message.photo,content_types = ['photo'],state = FSM_admin.photo)
-async def photo_fsm(message:types.Message,state:FSMContext):
-	async with state.proxy() as data:
-		data["photo"] = message.photo[0].file_id	
-
-	await message.answer("теперь выбери категорию",reply_markup = men_women())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.gender)
-async def gender_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = callback.data
-	print(callback.data)
-
-	await callback.message.answer("теперь выбери какой тип одежды",reply_markup =category_one())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.gender)
-async def gender_menu_cmd(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = callback.data
-	print(callback.data)
-
-	await callback.message.answer("теперь выбери какой тип одежды",reply_markup =category_one())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "FSM_shoes"),state = FSM_admin.category1)
-async def category1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = callback.data
-	print(callback.data)
-	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_shoes())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "FSM_Outerwear"),state = FSM_admin.category1)
-async def category1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = callback.data
-	print(callback.data)
-	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_outerwear())
-	await FSM_admin.next()   
-
-@dp.callback_query_handler(cd.filter(action = "FSM_Pants"),state = FSM_admin.category1)
-async def category1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = callback.data
-	print(callback.data)
-	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_pants())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "FSM_Accessories"),state = FSM_admin.category1)
-async def category1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = callback.data
-	print(callback.data)
-	await callback.message.answer("какую обувь вы хотите",reply_markup = category_two_accessories())
-	await FSM_admin.next()
 
 @dp.callback_query_handler(cd.filter(action = "count"))
 async def count_cmd(callback:types.CallbackQuery):
@@ -134,10 +68,11 @@ async def count_cmd(callback:types.CallbackQuery):
 async def share_cmd(callback:types.CallbackQuery):
 	await callback.message.edit_text('Расскажи друзьям в соц сетях: ',reply_markup = share_menu())
 
-@dp.callback_query_handler(cd.filter(action = "back_to_main"))
-async def back_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("Добро пожаловать в главное меню магазина!\
-						Мы продаем только в люсовом качаесте \
+@dp.callback_query_handler( cd.filter(action = "back_to_main"),state="*")
+async def back_cmd(callback:types.CallbackQuery, state: FSMContext):
+	await state.finish()
+	await callback.message.edit_text("Добро пожаловать в главное меню магазина!\n\
+						Мы продаем только в люксовом качаесте \n\
 						По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
 
 @dp.callback_query_handler(cd.filter(action = "women"))
@@ -293,6 +228,106 @@ async def back_to_photo_cmd(callback:types.CallbackQuery):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+#####################################################################		ADD PRODUCTS	#################################
+
+
+@dp.callback_query_handler(cd.filter(action = 'new_product'))
+async def new_product_cmd(callback:types.Message,state:FSMContext):
+	await callback.message.answer('Отправьте изображение товара ')
+	await FSM_admin.photo.set()
+
+@dp.message_handler(lambda message: not message.photo,state = FSM_admin.photo)
+async def add_FSMphoto_check(message:types.Message):
+	await message.answer("Ошибка. Отправьте изображение.")
+
+@dp.message_handler(lambda message: message.photo,content_types = ['photo'],state = FSM_admin.photo)
+async def add_FSMphoto(message:types.Message,state:FSMContext):
+	async with state.proxy() as data:
+		data["photo"] = message.photo[0].file_id	
+	await message.answer("Выберите одежда для какого пола",reply_markup = men_women())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.gender)
+async def add_FSMcategory_women(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["gender"] = callback.data
+	await callback.message.edit_text("Выберите категорию одежды",reply_markup = add_categoryK())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.gender)
+async def add_FSMcategory_men(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["gender"] = callback.data
+	await callback.message.edit_text("Выберите категорию одежды", reply_markup = add_categoryK())
+	await FSM_admin.next()
+
+
+
+@dp.callback_query_handler(cd.filter(action = "add_shoes"), state = FSM_admin.category1)
+async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = "Обувь"
+	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_shoesK())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "add_outerwear"), state = FSM_admin.category1)
+async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = "Верхняя одежда"
+	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_outerwearK())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "add_pants"), state = FSM_admin.category1)
+async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = "Штаны"
+	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_pantsK())
+	await FSM_admin.next()
+
+@dp.callback_query_handler(cd.filter(action = "add_accessories"), state = FSM_admin.category1)
+async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category1"] = "Аксессуары"
+	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_accessoriesK())
+	await FSM_admin.next()
+
+
+@dp.callback_query_handler(state = FSM_admin.category2)
+async def add_FSMcategory2(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["category2"] = callback.data
+	await callback.message.answer("Введите название товара")
+	await FSM_admin.next()
+
+@dp.message_handler(lambda message: message.text, content_types = ['text'], state = FSM_admin.name)
+async def add_FSMname(message:types.Message,state:FSMContext):
+	async with state.proxy() as data:
+		data["name"] = message.text
+	await message.answer("Введите стоимость товара")
+	await FSM_admin.next()
+
+@dp.message_handler(lambda message: message.text, content_types = ['text'], state = FSM_admin.price)
+async def add_FSMprice(message:types.Message,state:FSMContext):
+	async with state.proxy() as data:
+		data["price"] = message.text
+	await message.answer(data)
+	await state.finish()
+
+
+##########################################################################################################################
+
 if __name__ == "__main__":
 	executor.start_polling(dp,on_startup = on_startup)
-
