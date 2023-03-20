@@ -6,7 +6,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 from inline import *
-
+from aldiarSQL import *
 import os 
 
 #TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
@@ -323,7 +323,10 @@ async def add_FSMname(message:types.Message,state:FSMContext):
 async def add_FSMprice(message:types.Message,state:FSMContext):
 	async with state.proxy() as data:
 		data["price"] = message.text
-	await message.answer(data)
+	if data['gender'] == "Мужская":
+		sql_male(data)
+	elif data['gender'] == "Женская":
+		sql_female(data)
 	await state.finish()
 
 
