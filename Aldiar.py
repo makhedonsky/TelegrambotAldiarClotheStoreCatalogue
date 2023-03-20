@@ -263,14 +263,14 @@ async def add_FSMphoto(message:types.Message,state:FSMContext):
 @dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.gender)
 async def add_FSMcategory_women(callback:types.CallbackQuery,state:FSMContext):
 	async with state.proxy() as data:
-		data["gender"] = callback.data
+		data["gender"] = "Женская"
 	await callback.message.edit_text("Выберите категорию одежды",reply_markup = add_categoryK())
 	await FSM_admin.next()
 
 @dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.gender)
 async def add_FSMcategory_men(callback:types.CallbackQuery,state:FSMContext):
 	async with state.proxy() as data:
-		data["gender"] = callback.data
+		data["gender"] = "Мужская"
 	await callback.message.edit_text("Выберите категорию одежды", reply_markup = add_categoryK())
 	await FSM_admin.next()
 
