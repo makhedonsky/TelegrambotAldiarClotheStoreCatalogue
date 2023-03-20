@@ -9,7 +9,8 @@ OuterwearCreateTable = "CREATE TABLE Outerwear(category2 text, photo text, name 
 PantsShoesCreateTable = "CREATE TABLE Pants(category2 text, photo text, name text primary key, price text)"
 AccessoriesCreateTable = "CREATE TABLE Accessories(category2 text, photo text, name text primary key, price text)"
 
-
+connectionM = sq.connect('MaleDB.db')
+connectionF = sq.connect('FemaleDB.db')
 
 
 
@@ -57,29 +58,3 @@ def sql_female(data):
 
 	connectionF.commit()
 	connectionF.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
