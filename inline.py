@@ -50,16 +50,6 @@ def catalog_menu() -> InlineKeyboardMarkup:
 
 	return Inline
 
-def women_category_menu()->InlineKeyboardMarkup:
-	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Обувь",callback_data = cd.new("nothing"))],
-		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("nothing"))],
-		[InlineKeyboardButton("Нижняя одежда",callback_data = cd.new("nothing"))],
-		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("nothing"))],
-		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
-	])
-	
-	return Inline
 
 def women_category_menu()->InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
@@ -107,7 +97,7 @@ def men_shoes_menu() -> InlineKeyboardMarkup:
 
 def women_Outerwear() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Курткий", callback_data = cd.new("women_Курткий") )],
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("women_Куртки") )],
 		[InlineKeyboardButton("Кофты", callback_data = cd.new("women_Кофты") )],	
 		[InlineKeyboardButton("Свиторы", callback_data = cd.new("women_Свиторы"))],	
 		[InlineKeyboardButton("Дождевик",callback_data = cd.new("women_Дождевик"))],
@@ -118,7 +108,7 @@ def women_Outerwear() -> InlineKeyboardMarkup:
 
 def men_Outerwear() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Курткий", callback_data = cd.new("men_Курткий") )],
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("men_Куртки") )],
 		[InlineKeyboardButton("Кофты", callback_data = cd.new("men_Кофты") )],	
 		[InlineKeyboardButton("Свиторы", callback_data = cd.new("men_Свиторы"))],	
 		[InlineKeyboardButton("Дождевик",callback_data = cd.new("men_Дождевик"))],
@@ -129,10 +119,10 @@ def men_Outerwear() -> InlineKeyboardMarkup:
 
 def women_pants() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Трико", callback_data = cd.new("Трико") )],
-		[InlineKeyboardButton("Джинсы", callback_data = cd.new("Джинсы") )],	
-		[InlineKeyboardButton("Лассины", callback_data = cd.new("Лассины"))],	
-		[InlineKeyboardButton("Классический брюки",callback_data = cd.new("Классический брюки"))],
+		[InlineKeyboardButton("Трико", callback_data = cd.new("women_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("women_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("women_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
 	])
 
@@ -140,32 +130,32 @@ def women_pants() -> InlineKeyboardMarkup:
 
 def men_pants() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Трико", callback_data = cd.new("Трико") )],
-		[InlineKeyboardButton("Джинсы", callback_data = cd.new("Джинсы") )],	
-		[InlineKeyboardButton("Лассины", callback_data = cd.new("Лассины"))],	
-		[InlineKeyboardButton("Классический брюки",callback_data = cd.new("Классический брюки"))],
+		[InlineKeyboardButton("Трико", callback_data = cd.new("men_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("men_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("men_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
 	])
 
 	return Inline
 
-def Men_Accessories() -> InlineKeyboardMarkup:
+def men_accessories() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Очки", callback_data = cd.new("Очки") )],
-		[InlineKeyboardButton("Часы", callback_data = cd.new("Часы") )],	
-		[InlineKeyboardButton("Сумки", callback_data = cd.new("Сумки"))],	
-		[InlineKeyboardButton("Кальцо",callback_data = cd.new("Кальцо"))],
+		[InlineKeyboardButton("Очки", callback_data = cd.new("men_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("men_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("men_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("men_Кольцо"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
 	])
 
 	return Inline
 
-def Women_Accessories() -> InlineKeyboardMarkup:
+def women_accessories() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Очки", callback_data = cd.new("Очки") )],
-		[InlineKeyboardButton("Часы", callback_data = cd.new("Часы") )],	
-		[InlineKeyboardButton("Сумки", callback_data = cd.new("Сумки"))],	
-		[InlineKeyboardButton("Кальцо",callback_data = cd.new("Кальцо"))],
+		[InlineKeyboardButton("Очки", callback_data = cd.new("women_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("women_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("women_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("women_Кольцо"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
 	])
 
@@ -173,14 +163,29 @@ def Women_Accessories() -> InlineKeyboardMarkup:
 
 
 
-def things() -> InlineKeyboardMarkup:
-	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий`") )],
-		[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
-		[InlineKeyboardButton("Назад", callback_data = cd.new("back_to_photo"))],	
-	])
+def things(border,level) -> InlineKeyboardMarkup:
+	if 0 < level < border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == 0:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
 
 	return Inline
+
+
 
 
 
@@ -209,40 +214,40 @@ def add_categoryK() -> InlineKeyboardMarkup:
 
 def add_shoesK() -> InlineKeyboardMarkup:
 	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
-		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("add_sneakers"))],
-		[InlineKeyboardButton("Туфли",callback_data = cd.new("add_heeledShoes"))],
-		[InlineKeyboardButton("Сандали",callback_data = cd.new("add_sandals"))],
-		[InlineKeyboardButton("Сапоги",callback_data = cd.new("add_boots"))],
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("AddКроссовки"))],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("AddТуфли"))],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("AddСандали"))],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("AddСапоги"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]	
 	])
 
 	return Inline
 def add_outerwearK() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Курткий", callback_data = cd.new("add_jacket") )],
-		[InlineKeyboardButton("Кофты", callback_data = cd.new("add_jersey") )],	
-		[InlineKeyboardButton("Свиторы", callback_data = cd.new("add_sweater"))],	
-		[InlineKeyboardButton("Дождевик",callback_data = cd.new("add_raincoat"))],
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("AddКуртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("AddКофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("AddСвиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("AddДождевик"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
 	])
 
 	return Inline
 def add_pantsK() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Трико", callback_data = cd.new("add_leotard") )],
-		[InlineKeyboardButton("Джинсы", callback_data = cd.new("add_jeans") )],	
-		[InlineKeyboardButton("Лосины", callback_data = cd.new("add_leggings"))],	
-		[InlineKeyboardButton("Классический брюки",callback_data = cd.new("add_trousers"))],
+		[InlineKeyboardButton("Трико", callback_data = cd.new("AddТрико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("AddДжинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("AddЛосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("AddКлассические брюки"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
 	])
 
 	return Inline
 def add_accessoriesK() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Очки", callback_data = cd.new("add_glasses") )],
-		[InlineKeyboardButton("Часы", callback_data = cd.new("add_watch") )],	
-		[InlineKeyboardButton("Сумки", callback_data = cd.new("add_bag"))],	
-		[InlineKeyboardButton("Кольцо",callback_data = cd.new("add_ring"))],
+		[InlineKeyboardButton("Очки", callback_data = cd.new("AddОчки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("AddЧасы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("AddСумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("AddКольцо"))],
 		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
 	])
 
