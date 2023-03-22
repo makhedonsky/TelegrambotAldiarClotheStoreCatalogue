@@ -35,8 +35,13 @@ class FSM_admin(StatesGroup):
 	price = State()
 
 
+
+
+
+
 @dp.message_handler(commands = ["start"])
 async def start_cmd(message:types.Message):
+	global res
 	await message.answer("Добро пожаловать в главное меню магазина!\
 						Мы продаем только в люсовом качаесте \
 						По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
@@ -68,12 +73,16 @@ async def count_cmd(callback:types.CallbackQuery):
 async def share_cmd(callback:types.CallbackQuery):
 	await callback.message.edit_text('Расскажи друзьям в соц сетях: ',reply_markup = share_menu())
 
+@dp.callback_query_handler( cd.filter(action = "back_to_main"))
 @dp.callback_query_handler( cd.filter(action = "back_to_main"),state="*")
 async def back_cmd(callback:types.CallbackQuery, state: FSMContext):
+	global CURRENT_LEVEL
+	CURRENT_LEVEL = 0
 	await state.finish()
 	await callback.message.edit_text("Добро пожаловать в главное меню магазина!\n\
 						Мы продаем только в люксовом качаесте \n\
 						По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
+
 
 @dp.callback_query_handler(cd.filter(action = "women"))
 async def women_cmd(callback:types.CallbackQuery):
@@ -96,140 +105,324 @@ async def men_cmd(callback:types.CallbackQuery):
 
 @dp.callback_query_handler(cd.filter(action = "women_shoes"))
 async def women_shoes_menu_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Обувь'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_shoes_menu() )
 
 @dp.callback_query_handler(cd.filter(action = "men_shoes"))
 async def men_shoes_menu_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Обувь'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_shoes_menu() )
 
 @dp.callback_query_handler(cd.filter(action = "WomenOuterwear"))
 async def women_Outerwear_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Верхняя одежда'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_Outerwear() )
 
 @dp.callback_query_handler(cd.filter(action = "MenOuterwear"))
 async def men_Outerwear_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Верхняя одежда'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_Outerwear() )
 
 @dp.callback_query_handler(cd.filter(action = "WomenPants"))
 async def women_pants_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Штаны'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_pants() )	
 
 @dp.callback_query_handler(cd.filter(action = "MenPants"))
 async def men_pants_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Штаны'
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_pants() )
 
 @dp.callback_query_handler(cd.filter(action = "WomenAccessories"))
-async def Women_Accessories_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = Women_Accessories() )	
+async def women_accessories_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Аксессуары'
+	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_accessories() )	
 
 @dp.callback_query_handler(cd.filter(action = "MenAccessories"))
-async def Men_Accessories_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = Men_Accessories() )
+async def men_accessories_cmd(callback:types.CallbackQuery):
+	global choise1category
+	choise1category = 'Аксессуары'
+	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_accessories() )
 
 # ********************************************************************** women Обувь **************************************************************************************
 
 
 @dp.callback_query_handler(cd.filter(action = "women_Кроссовки"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def women_sneakers(callback:types.CallbackQuery):
+	await callback.message.delete()	
+	global res
+	res = sql_female_select(choise1category,"Кроссовки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Туфли"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def women_heels(callback:types.CallbackQuery):
+
+	global res
+	res = sql_female_select(choise1category,"Туфли")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Сандали"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def women_sandals(callback:types.CallbackQuery):
+
+	global res
+	res = sql_female_select(choise1category,"Сандали")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Сапоги"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def women_boots(callback:types.CallbackQuery):
 
-@dp.callback_query_handler(cd.filter(action = "back_to_photo"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = women_shoes_menu())
+	global res
+	res = sql_female_select(choise1category,"Сапоги")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
 
 # ********************************************************************** men Обувь **************************************************************************************
 
 @dp.callback_query_handler(cd.filter(action = "men_Кроссовки"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def men_sneakers(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Кроссовки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Туфли"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def men_heels(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Туфли")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Сандали"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def men_sandals(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Сандали")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Сапоги"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def man_boots(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Сапоги")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "back_to_photo"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = men_shoes_menu())
 
 # ********************************************************************** women Верхняя одежда **************************************************************************************
 
-@dp.callback_query_handler(cd.filter(action = "women_Курткий"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things2())
+@dp.callback_query_handler(cd.filter(action = "women_Куртки"))
+async def women_jackets(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Куртки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Кофты"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things2())
+async def women_blouses(message:types.Message):
+	global res
+	res = sql_female_select(choise1category,"Кофты")
+	await bot.send_photo(message.from_user.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Свиторы"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things2())
+async def women_sweaters(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Свиторы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Дождевик"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things2())
+async def women_raincoats(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Дождевик")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "back_to_photo2"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = women_Outerwear())
 
 # ********************************************************************** men Верхняя одежда **************************************************************************************
 
-@dp.callback_query_handler(cd.filter(action = "men_Курткий"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+@dp.callback_query_handler(cd.filter(action = "men_Куртки"))
+async def men_jackets(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Куртки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "men_Кофты"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+@dp.callback_query_handler(cd.filter(action = "men_Кофты"))#		THE ONLY WORKING HANDLER
+async def men_blouses(message:types.Message):
+	global res
+	res = sql_male_select(choise1category,"Кофты")
+	await bot.send_photo(message.from_user.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Свиторы"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
+async def men_sweaters(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Свиторы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Дождевик"))
-async def Sneakers_cmd(message:types.Message):
-	await bot.send_photo(message.from_user.id,"https://sunmag.me/wp-content/uploads/2020/09/sunmag-1-65.jpg",caption = "удобная",reply_markup = things())
-
-@dp.callback_query_handler(cd.filter(action = "back_to_photo2"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = men_Outerwear())
-
-# ********************************************************************** men Верхняя одежда ************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "back_to_photo"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = men_shoes_menu())
-
-@dp.callback_query_handler(cd.filter(action = "back_to_photo"))
-async def back_to_photo_cmd(callback:types.CallbackQuery):
-	await callback.message.answer("Выберите категорию :",reply_markup = women_shoes_menu())
+async def men_raincoats(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Дождевик")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
+# ********************************************************************** men PANTS ************************************************************************************
 
 
+@dp.callback_query_handler(cd.filter(action = "men_Трико"))
+async def men_tights(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Трико")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Джинсы"))
+async def men_jeans(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Джинсы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Лосины"))
+async def men_leggings(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Лосины")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Классические брюки"))
+async def men_classic_pants(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Классические брюки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+
+
+
+# ********************************************************************** women PANTS ************************************************************************************
+
+
+@dp.callback_query_handler(cd.filter(action = "women_Трико"))
+async def women_tights(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Трико")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "women_Джинсы"))
+async def women_jeans(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Джинсы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "women_Лосины"))
+async def women_leggings(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Лосины")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "women_Классические брюки"))
+async def women_classic_pants(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Классические брюки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+
+
+
+# ********************************************************************** men ACCESSORIES ************************************************************************************
+
+
+@dp.callback_query_handler(cd.filter(action = "men_Очки"))
+async def men_glasses(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Очки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Часы"))
+async def men_watches(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Часы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Сумки"))
+async def men_bags(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Сумки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Кольцо"))
+async def men_ring(callback:types.CallbackQuery):
+	global res
+	res = sql_male_select(choise1category,"Кольцо")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+
+
+
+# ********************************************************************** women ACCESSORIES ************************************************************************************
+
+
+@dp.callback_query_handler(cd.filter(action = "women_Очки"))
+async def women_glasses(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Очки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	#
+
+@dp.callback_query_handler(cd.filter(action = "women_Часы"))
+async def women_watches(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Часы")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "women_Сумки"))
+async def women_bags(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Сумки")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "women_Кольцо"))
+async def women_ring(callback:types.CallbackQuery):
+	global res
+	res = sql_female_select(choise1category,"Кольцо")
+	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CURRENT_LEVEL = 0
+
+
+@dp.callback_query_handler(cd.filter(action = "Следующий"))
+async def next_product(callback:types.CallbackQuery):
+	global CURRENT_LEVEL
+	CURRENT_LEVEL = CURRENT_LEVEL + 1
+	print(len(res), '	res')
+	print(CURRENT_LEVEL, '	CURRENT_LEVEL')
+	await callback.message.edit_media(types.InputMedia(media = res[CURRENT_LEVEL][1], type = 'photo', caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}'),reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "Предыдущий"))
+async def previous_product(callback:types.CallbackQuery):
+	global CURRENT_LEVEL
+	CURRENT_LEVEL = CURRENT_LEVEL - 1
+	await callback.message.edit_media(types.InputMedia(media = res[CURRENT_LEVEL][1], type = 'photo', caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}'),reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "back_from_things"))
+async def callback_Catalog(callback:types.CallbackQuery):
+	await callback.message.delete()
+	await callback.message.answer('Выберите категорию : ',reply_markup = catalog_menu())
 
 
 
@@ -308,7 +501,7 @@ async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
 @dp.callback_query_handler(state = FSM_admin.category2)
 async def add_FSMcategory2(callback:types.CallbackQuery,state:FSMContext):
 	async with state.proxy() as data:
-		data["category2"] = callback.data
+		data["category2"] = callback.data[10:]
 	await callback.message.answer("Введите название товара")
 	await FSM_admin.next()
 
