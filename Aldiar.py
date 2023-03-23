@@ -5,14 +5,14 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
-from inline import *
+from keyboard import *
 from aldiarSQL import *
 import os 
 
-#TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
+TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
 
 storage = MemoryStorage()
-bot = Bot(token=os.getenv('TOKEN'))
+bot = Bot(token=TOKEN)
 dp = Dispatcher(bot,storage = storage)
 
 async def on_startup(_):
@@ -34,8 +34,10 @@ class FSM_admin(StatesGroup):
 	name = State()
 	price = State()
 
-
-
+class delete_fsm(StatesGroup):
+	name = State()
+	Category = State()
+	price = State()
 
 
 
@@ -464,7 +466,7 @@ async def callback_Catalog(callback:types.CallbackQuery):
 
 
 @dp.callback_query_handler(cd.filter(action = 'new_product'))
-async def new_product_cmd(callback:types.Message,state:FSMContext):
+async def new_product_cmd(callback:types.Message):
 	await callback.message.answer('Отправьте изображение товара ')
 	await FSM_admin.photo.set()
 
@@ -492,8 +494,6 @@ async def add_FSMcategory_men(callback:types.CallbackQuery,state:FSMContext):
 		data["gender"] = "Мужская"
 	await callback.message.edit_text("Выберите категорию одежды", reply_markup = add_categoryK())
 	await FSM_admin.next()
-
-
 
 @dp.callback_query_handler(cd.filter(action = "add_shoes"), state = FSM_admin.category1)
 async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
@@ -551,7 +551,72 @@ async def add_FSMprice(message:types.Message,state:FSMContext):
 		Мы продаем только в люксовом качестве \n\
 		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
 
+##########################################################################################################################
 
+@dp.callback_query_handler(cd.filter(action = 'delete_goods'))
+async def new_product_cmd(callback:types.CallbackQuery):
+	await callback.message.answer("напишите имя товара")
+	await delete_fsm.name.set()
+
+@dp.message_handler(state = delete_fsm.name)
+async def cmd_get_name(callback:types.Message,state:FSMContext):
+	async with state.proxy() as data:
+		data["name"] = callback.text
+	print(type(callback.text))
+	await callback.answer('напишите выберите категорию',reply_markup = Category())
+	await delete_fsm.next()
+
+@dp.callback_query_handler(cd.filter( action = "Shoes"),state = delete_fsm.Category)
+async def cmd_get(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["Category"] = "Shoes"
+	await callback.message.answer('напишите цену товара')
+	await delete_fsm.next()
+
+
+@dp.callback_query_handler(cd.filter(action = "Outerwear"),state = delete_fsm.Category)
+async def cmd_get(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["Category"] = "Outerwear"
+	await callback.message.answer('напишите цену товара')
+	await delete_fsm.next()
+
+
+@dp.callback_query_handler(cd.filter(action = "Pants"),state = delete_fsm.Category)
+async def cmd_get(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["Category"] = "Pants"
+	await callback.message.answer('напишите цену товара')
+	await delete_fsm.next()
+
+
+@dp.callback_query_handler(cd.filter(action = "Accessories"),state = delete_fsm.Category)
+async def cmd_get(callback:types.CallbackQuery,state:FSMContext):
+	async with state.proxy() as data:
+		data["Category"] = "Accessories"
+	await callback.message.answer('напишите цену товара')
+	await delete_fsm.next()
+
+
+@dp.message_handler(state = delete_fsm.price)
+async def cmd_get_price(message:types.Message,state:FSMContext):
+	print("in")
+	async with state.proxy() as data:
+		data["price"] = message.text
+	print(message.text)
+	it_is = mysql(data)
+	await bot.send_photo(message.from_user.id,it_is[1],caption = f"{data['name']}, \nцена - {data['price']}",reply_markup = get_True())
+	await delete_fsm.next()
+
+@dp.callback_query_handler(cd.filter(action = "Yes"))
+async def cmd_yes(message:types.Message,state:FSMContext):
+	async with state.proxy() as data :
+		delete_something(data)
+	await message.message.answer("успешно удалено",reply_markup = main_menu())
+
+@dp.callback_query_handler(cd.filter(action ="No"))
+async def cmd_yes(message:types.Message,state:FSMContext):
+	await message.message.answer("к сожалению не нашили",reply_markup = main_menu())
 
 ##########################################################################################################################
 
