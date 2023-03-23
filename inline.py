@@ -7,7 +7,7 @@ def main_menu() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
 		[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
 		[InlineKeyboardButton("Помощь",callback_data = cd.new("help")),InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
-		[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product"))]
+		[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product")),InlineKeyboardButton("Удалить товар",callback_data = cd.new("delete_goods"))]
 	])
 
 	return Inline
@@ -253,7 +253,19 @@ def add_accessoriesK() -> InlineKeyboardMarkup:
 
 	return Inline
 
+def Category() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("Shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("Outerwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("Pants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("Accessories"))],
+	])
+	return Inline
 
-
-
+def get_True():
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Да",callback_data = cd.new("Yes"))],
+		[InlineKeyboardButton("Нет",callback_data = cd.new("No"))]
+	])
+	return Inline
 
