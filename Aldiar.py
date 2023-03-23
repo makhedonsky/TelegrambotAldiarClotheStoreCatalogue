@@ -42,9 +42,9 @@ class FSM_admin(StatesGroup):
 @dp.message_handler(commands = ["start"])
 async def start_cmd(message:types.Message):
 	global res
-	await message.answer("Добро пожаловать в главное меню магазина!\
-						Мы продаем только в люсовом качаесте \
-						По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
+	await message.answer("Добро пожаловать в главное меню магазина!\n\
+		Мы продаем только в люксовом качестве \n\
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
 
 @dp.callback_query_handler(cd.filter(action = "help"))
 async def callback_help(callback:types.CallbackQuery):
@@ -79,9 +79,9 @@ async def back_cmd(callback:types.CallbackQuery, state: FSMContext):
 	global CURRENT_LEVEL
 	CURRENT_LEVEL = 0
 	await state.finish()
-	await callback.message.edit_text("Добро пожаловать в главное меню магазина!\n\
-						Мы продаем только в люксовом качаесте \n\
-						По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
+	await callback.message.edit_text("Вы вернулись в главное меню магазина!\n\
+		Мы продаем только в люксовом качестве \n\
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
 
 
 @dp.callback_query_handler(cd.filter(action = "women"))
@@ -155,33 +155,32 @@ async def men_accessories_cmd(callback:types.CallbackQuery):
 
 
 @dp.callback_query_handler(cd.filter(action = "women_Кроссовки"))
-async def women_sneakers(callback:types.CallbackQuery):
-	await callback.message.delete()	
+async def women_sneakers(callback:types.CallbackQuery):	
 	global res
 	res = sql_female_select(choise1category,"Кроссовки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Туфли"))
 async def women_heels(callback:types.CallbackQuery):
-
 	global res
 	res = sql_female_select(choise1category,"Туфли")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Сандали"))
 async def women_sandals(callback:types.CallbackQuery):
-
 	global res
 	res = sql_female_select(choise1category,"Сандали")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Сапоги"))
 async def women_boots(callback:types.CallbackQuery):
-
 	global res
 	res = sql_female_select(choise1category,"Сапоги")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 # ********************************************************************** men Обувь **************************************************************************************
 
@@ -189,25 +188,29 @@ async def women_boots(callback:types.CallbackQuery):
 async def men_sneakers(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Кроссовки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Туфли"))
 async def men_heels(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Туфли")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Сандали"))
 async def men_sandals(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Сандали")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Сапоги"))
 async def man_boots(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Сапоги")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 # ********************************************************************** women Верхняя одежда **************************************************************************************
@@ -216,25 +219,29 @@ async def man_boots(callback:types.CallbackQuery):
 async def women_jackets(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Куртки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Кофты"))
 async def women_blouses(message:types.Message):
 	global res
 	res = sql_female_select(choise1category,"Кофты")
-	await bot.send_photo(message.from_user.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Свиторы"))
 async def women_sweaters(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Свиторы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Дождевик"))
 async def women_raincoats(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Дождевик")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 # ********************************************************************** men Верхняя одежда **************************************************************************************
@@ -243,25 +250,30 @@ async def women_raincoats(callback:types.CallbackQuery):
 async def men_jackets(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Куртки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "men_Кофты"))#		THE ONLY WORKING HANDLER
-async def men_blouses(message:types.Message):
-	global res
-	res = sql_male_select(choise1category,"Кофты")
-	await bot.send_photo(message.from_user.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+
+@dp.callback_query_handler(cd.filter(action = "men_Кофты"))#    THE ONLY WORKING HANDLER
+async def men_blouses(callback:types.CallbackQuery):
+  global res
+  res = sql_male_select(choise1category,"Кофты")
+  await callback.message.delete()
+  await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Свиторы"))
 async def men_sweaters(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Свиторы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Дождевик"))
 async def men_raincoats(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Дождевик")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
@@ -272,25 +284,29 @@ async def men_raincoats(callback:types.CallbackQuery):
 async def men_tights(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Трико")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Джинсы"))
 async def men_jeans(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Джинсы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Лосины"))
 async def men_leggings(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Лосины")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Классические брюки"))
 async def men_classic_pants(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Классические брюки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
@@ -302,25 +318,29 @@ async def men_classic_pants(callback:types.CallbackQuery):
 async def women_tights(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Трико")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Джинсы"))
 async def women_jeans(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Джинсы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Лосины"))
 async def women_leggings(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Лосины")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Классические брюки"))
 async def women_classic_pants(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Классические брюки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
@@ -332,26 +352,29 @@ async def women_classic_pants(callback:types.CallbackQuery):
 async def men_glasses(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Очки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Часы"))
 async def men_watches(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Часы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Сумки"))
 async def men_bags(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Сумки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "men_Кольцо"))
 async def men_ring(callback:types.CallbackQuery):
 	global res
 	res = sql_male_select(choise1category,"Кольцо")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
@@ -362,26 +385,29 @@ async def men_ring(callback:types.CallbackQuery):
 async def women_glasses(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Очки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-	#
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Часы"))
 async def women_watches(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Часы")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Сумки"))
 async def women_bags(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Сумки")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 @dp.callback_query_handler(cd.filter(action = "women_Кольцо"))
 async def women_ring(callback:types.CallbackQuery):
 	global res
 	res = sql_female_select(choise1category,"Кольцо")
-	await callback.message.edit_text(f'{res[CURRENT_LEVEL][1]},{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	await callback.message.delete()
+	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
 
 
@@ -521,6 +547,10 @@ async def add_FSMprice(message:types.Message,state:FSMContext):
 	elif data['gender'] == "Женская":
 		sql_female(data)
 	await state.finish()
+	await message.answer("Вы вернулись в главное меню магазина!\n\
+		Мы продаем только в люксовом качестве \n\
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu())
+
 
 
 ##########################################################################################################################
