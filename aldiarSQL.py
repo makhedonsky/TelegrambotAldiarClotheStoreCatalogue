@@ -4,16 +4,24 @@ from contextlib import closing
 
 
 
-ShoesCreateTable = "CREATE TABLE Shoes(category2 text, photo text, name text primary key, price text)"
-OuterwearCreateTable = "CREATE TABLE Outerwear(category2 text, photo text, name text primary key, price text)"
-PantsShoesCreateTable = "CREATE TABLE Pants(category2 text, photo text, name text primary key, price text)"
-AccessoriesCreateTable = "CREATE TABLE Accessories(category2 text, photo text, name text primary key, price text)"
-
+ShoesCreateTable = "CREATE TABLE IF NOT EXISTS Shoes(category2 text, photo text, name text primary key, price text)"
+OuterwearCreateTable = "CREATE TABLE IF NOT EXISTS Outerwear(category2 text, photo text, name text primary key, price text)"
+PantsCreateTable = "CREATE TABLE IF NOT EXISTS Pants(category2 text, photo text, name text primary key, price text)"
+AccessoriesCreateTable = "CREATE TABLE IF NOT EXISTS Accessories(category2 text, photo text, name text primary key, price text)"
 
 
 connectionM = sqlite3.connect('MaleDB.db')
 connectionF = sqlite3.connect('FemaleDB.db')
 
+connectionM.execute(ShoesCreateTable)
+connectionM.execute(OuterwearCreateTable)
+connectionM.execute(PantsCreateTable)
+connectionM.execute(AccessoriesCreateTable)
+
+connectionF.execute(ShoesCreateTable)
+connectionF.execute(OuterwearCreateTable)
+connectionF.execute(PantsCreateTable)
+connectionF.execute(AccessoriesCreateTable)
 
 
 def sql_male(data):
@@ -134,24 +142,6 @@ def sql_female_select(choise, product):
 		SelectedList = cursorF.fetchall()
 
 	return SelectedList
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
