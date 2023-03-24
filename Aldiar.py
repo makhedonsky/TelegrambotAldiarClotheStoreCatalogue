@@ -600,12 +600,15 @@ async def cmd_get(callback:types.CallbackQuery,state:FSMContext):
 
 @dp.message_handler(state = delete_fsm.price)
 async def cmd_get_price(message:types.Message,state:FSMContext):
-	print("in")
 	async with state.proxy() as data:
 		data["price"] = message.text
 	print(message.text)
 	it_is = mysql(data)
-	await bot.send_photo(message.from_user.id,it_is[1],caption = f"{data['name']}, \nцена - {data['price']}",reply_markup = get_True())
+	try:
+		await bot.send_photo(message.from_user.id,it_is[1],caption = f"{data['name']}, \nцена - {data['price']}",reply_markup = get_True())
+	except TypeError:	
+		await message.answer("не нашли ")
+
 	await delete_fsm.next()
 
 @dp.callback_query_handler(cd.filter(action = "Yes"))
