@@ -1,158 +1,271 @@
-import sqlite3
-from contextlib import closing
+from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
+from aiogram.utils.callback_data import CallbackData
+
+cd = CallbackData("Inline","action")
+
+def main_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+		[InlineKeyboardButton("Помощь",callback_data = cd.new("help")),InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
+		[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product")),InlineKeyboardButton("Удалить товар",callback_data = cd.new("delete_goods"))]
+	])
+
+	return Inline
+
+def help_keyboard() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+		[InlineKeyboardButton("Партнерам",callback_data = cd.new("partner")),InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_goods"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new("back_to_main"))]
+	])
+
+	return Inline
+
+def partner_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Мои баллы",callback_data = cd.new("count"))],
+		[InlineKeyboardButton("Запросить скидку",callback_data = cd.new("discount")),InlineKeyboardButton("Поделиться",callback_data = cd.new("Поделиться"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new("back_to_main"))]
+	])
+
+	return Inline
+
+def share_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(inline_keyboard = [
+		[InlineKeyboardButton("Рассказать друзьям VK","https://vk.com/english_russian_language_exchang")],
+		[InlineKeyboardButton("Рассказать друзьям Telegam","https://web.telegram.org/k/")],
+		[InlineKeyboardButton("Рассказать друзьям Facebook","https://ru-ru.facebook.com/")],
+		[InlineKeyboardButton("Рассказать друзьям Twitter","https://twitter.com/?lang=ru")],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('bakc_to_partner'))]
+	])
+
+	return Inline
+
+def catalog_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Женская",callback_data = cd.new('women'))],
+		[InlineKeyboardButton("Мужская",callback_data = cd.new('men'))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+
+
+def women_category_menu()->InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("women_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("WomenOuterwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("WomenPants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("WomenAccessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_category_menu()->InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("men_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("MenOuterwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("MenPants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("MenAccessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_shoes_menu() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("women_Кроссовки") )],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("women_Туфли") )],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("women_Сандали") )],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("women_Сапоги") )],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_shoes_menu() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("men_Кроссовки"))],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("men_Туфли"))],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("men_Сандали"))],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("men_Сапоги"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_Outerwear() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("women_Куртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("women_Кофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("women_Свиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("women_Дождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('women_back_to_catalog'))]	
+	])
+
+	return Inline
+
+def men_Outerwear() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("men_Куртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("men_Кофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("men_Свиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("men_Дождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('men_back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_pants() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("women_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("women_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("women_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline	
+
+def men_pants() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("men_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("men_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("men_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_accessories() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("men_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("men_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("men_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("men_Кольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_accessories() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("women_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("women_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("women_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("women_Кольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+
+
+def things(border,level) -> InlineKeyboardMarkup:
+	if 0 < level < border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == 0:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	return Inline
 
 
 
 
-ShoesCreateTable = "CREATE TABLE IF NOT EXISTS Shoes(category2 text, photo text, name text primary key, price text)"
-OuterwearCreateTable = "CREATE TABLE IF NOT EXISTS Outerwear(category2 text, photo text, name text primary key, price text)"
-PantsCreateTable = "CREATE TABLE IF NOT EXISTS Pants(category2 text, photo text, name text primary key, price text)"
-AccessoriesCreateTable = "CREATE TABLE IF NOT EXISTS Accessories(category2 text, photo text, name text primary key, price text)"
-
-
-connectionM = sqlite3.connect('MaleDB.db')
-connectionF = sqlite3.connect('FemaleDB.db')
-
-connectionM.execute(ShoesCreateTable)
-connectionM.execute(OuterwearCreateTable)
-connectionM.execute(PantsCreateTable)
-connectionM.execute(AccessoriesCreateTable)
-
-connectionF.execute(ShoesCreateTable)
-connectionF.execute(OuterwearCreateTable)
-connectionF.execute(PantsCreateTable)
-connectionF.execute(AccessoriesCreateTable)
-
-
-def sql_male(data):
-	connectionM = sqlite3.connect('MaleDB.db')
-
-	if data['category1'] == 'Аксессуары':
-		AccessoriesInsertTable = f"INSERT INTO Accessories(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionM.execute(AccessoriesInsertTable)
-
-	elif data['category1'] == 'Обувь':
-		ShoesInsertTable = f"INSERT INTO Shoes(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionM.execute(ShoesInsertTable)
-
-	elif data['category1'] == 'Верхняя одежда':
-		OuterwearInsertTable = f"INSERT INTO Outerwear(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionM.execute(OuterwearInsertTable)
-
-	elif data['category1'] == 'Штаны':
-		PantsInsertTable = f"INSERT INTO Pants(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionM.execute(PantsInsertTable)
-
-	connectionM.commit()
-	connectionM.close()
-
-
-def sql_female(data):
-	connectionF = sqlite3.connect('FemaleDB.db')
-
-	if data['category1'] == 'Аксессуары':
-		AccessoriesInsertTable = f"INSERT INTO Accessories(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionF.execute(AccessoriesInsertTable)
-
-	elif data['category1'] == 'Обувь':
-		ShoesInsertTable = f"INSERT INTO Shoes(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionF.execute(ShoesInsertTable)
-
-	elif data['category1'] == 'Верхняя одежда':
-		OuterwearInsertTable = f"INSERT INTO Outerwear(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionF.execute(OuterwearInsertTable)
-
-	elif data['category1'] == 'Штаны':
-		PantsInsertTable = f"INSERT INTO Pants(category2, photo, name, price) VALUES ('{data['category2']}', '{data['photo']}', '{data['name']}', '{data['price']}')"
-		connectionF.execute(PantsInsertTable)
-
-	connectionF.commit()
-	connectionF.close()
-
-def mysql(data):
-	connectionM = sqlite3.connect('MaleDB.db')
-	cursorM = connectionM.cursor()
-
-	cursorM.execute(f"SELECT * FROM {data['Category']} WHERE name = '{data['name']}'and  price = {data['price']}")
-
-	return cursorM.fetchone()
-
-def delete_something(data):
-	connectionM = sqlite3.connect('MaleDB.db')
-	cursorM = connectionM.cursor()
-
-	cursorM.execute(f"DELETE FROM {data['Category']} WHERE name='{data['name']}' and price = {data['price']}")
-	connectionM.commit()
-
-
-def sql_male_select(choise, product):
-	connectionM = sqlite3.connect('MaleDB.db')
-	cursorM = connectionM.cursor()
-	global SelectedList
-
-	if choise == 'Аксессуары':
-		AccessoriesSelect = f"SELECT * FROM Accessories WHERE category2 = '{product}'"
-
-		cursorM.execute(AccessoriesSelect)
-		SelectedList = cursorM.fetchall()
-
-
-	elif choise == 'Обувь':
-		ShoesSelect = f"SELECT * FROM Shoes WHERE category2 = '{product}'"
-
-		cursorM.execute(ShoesSelect)
-		SelectedList = cursorM.fetchall()
-
-
-	elif choise == 'Верхняя одежда':
-		OuterwearSelect = f"SELECT * FROM Outerwear WHERE category2 = '{product}'"
-
-		cursorM.execute(OuterwearSelect)
-		SelectedList = cursorM.fetchall()
-
-
-	elif choise == 'Штаны':
-		PantsSelect = f"SELECT * FROM Pants WHERE category2 = '{product}'"
-
-		cursorM.execute(PantsSelect)
-		SelectedList = cursorM.fetchall()
-
-	return SelectedList
 
 
 
-def sql_female_select(choise, product):
-	connectionF = sqlite3.connect('FemaleDB.db')
-	cursorF = connectionF.cursor()
-	global SelectedList
-
-	if choise == 'Аксессуары':
-		AccessoriesSelect = f"SELECT * FROM Accessories WHERE category2 = '{product}'"
-
-		cursorF.execute(AccessoriesSelect)
-		SelectedList = cursorM.fetchall()
 
 
-	elif choise == 'Обувь':
-		ShoesSelect = f"SELECT * FROM Shoes WHERE category2 = '{product}'"
+#########################################	PRODUCT ADD KEYBOARD   ####################################
 
-		cursorF.execute(ShoesSelect)
-		SelectedList = cursorF.fetchall()
+def men_women() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton('Женская',callback_data = cd.new("Женская"))],
+		[InlineKeyboardButton('Мужская',callback_data = cd.new("Мужская"))]
+	])
+	return Inline
 
+def add_categoryK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("add_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("add_outerwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("add_pants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("add_accessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+	return Inline
 
-	elif choise == 'Верхняя одежда':
-		OuterwearSelect = f"SELECT * FROM Outerwear WHERE category2 = '{product}'"
+def add_shoesK() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("AddКроссовки"))],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("AddТуфли"))],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("AddСандали"))],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("AddСапоги"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]	
+	])
 
-		cursorF.execute(OuterwearSelect)
-		SelectedList = cursorF.fetchall()
+	return Inline
+def add_outerwearK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("AddКуртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("AddКофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("AddСвиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("AddДождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
 
+	return Inline
+def add_pantsK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("AddТрико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("AddДжинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("AddЛосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("AddКлассические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
 
-	elif choise == 'Штаны':
-		PantsSelect = f"SELECT * FROM Pants WHERE category2 = '{product}'"
+	return Inline
+def add_accessoriesK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("AddОчки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("AddЧасы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("AddСумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("AddКольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
 
-		cursorF.execute(PantsSelect)
-		SelectedList = cursorF.fetchall()
+	return Inline
 
-	return SelectedList
+def Category() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("Shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("Outerwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("Pants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("Accessories"))],
+	])
+	return Inline
 
+def get_True():
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Да",callback_data = cd.new("Yes"))],
+		[InlineKeyboardButton("Нет",callback_data = cd.new("No"))]
+	])
+	return Inline
 
