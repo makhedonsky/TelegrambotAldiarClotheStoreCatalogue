@@ -69,8 +69,18 @@ def sql_female(data):
 	connectionF.commit()
 	connectionF.close()
 
+def mysql(data):
+	connectionM = sqlite3.connect('MaleDB.db')
+	cursorM = connectionM.cursor()
+	cursorM.execute(f"SELECT * FROM {data['Category']} WHERE name = '{data['name']}'and  price = {data['price']}")	
+	return cursorM.fetchone()
 
+def delete_something(data):
+	connectionM = sqlite3.connect('MaleDB.db')
+	cursorM = connectionM.cursor()
 
+	cursorM.execute(f"DELETE FROM {data['Category']} WHERE name='{data['name']}' and price = {data['price']}")
+	connectionM.commit()
 
 
 def sql_male_select(choise, product):
@@ -142,12 +152,5 @@ def sql_female_select(choise, product):
 		SelectedList = cursorF.fetchall()
 
 	return SelectedList
-
-
-
-
-
-
-
 
 
