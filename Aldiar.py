@@ -20,11 +20,9 @@ async def on_startup(_):
 	print("бот вошел в онлайн")
 
 HELP = """
-	Каталог - для просмотра нашего товара,
-	Для заказа - если хотите закзать наш товар,
-	Помощь - для ознокомление с функцианалом бота,
+	Каталог - просмотр товаров в магазине,\n
+	Помощь - для ознакомления с функцианалом бота,\n
 	Партнерам - если есть предложение для сотрудничество,
-	Опубликовать товар - что то будет делать
 """
 
 class FSM_admin(StatesGroup):
@@ -48,9 +46,11 @@ class FSM_delete(StatesGroup):
 
 @dp.message_handler(commands = ["start"])
 async def start_cmd(message:types.Message):
+	global clientID
+	clientID = message.from_user.id
 	await message.answer("Добро пожаловать в главное меню магазина!\n\
 		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(message.from_user.id)))
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
 
 @dp.callback_query_handler(cd.filter(action = "help"))
 async def callback_help(callback:types.CallbackQuery):
@@ -62,32 +62,30 @@ async def callback_Catalog(callback:types.CallbackQuery):
 
 @dp.callback_query_handler(cd.filter(action = "partner"))
 async def partner_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("За каждого приглашенного участника вы получаете 200 руб бонуса,которые вы впоследствии \
-							можете использовать для получения скидки на заказ. Для этого оправте ему копию партнерской \
-							ссылки из раздела \" Получить портнерскую ссылку \"Максимальная скидка но одну товарную позицию 1000р. \
-							При стоимость товорной позиции более 20 000р максиальная скидка 2000р ", reply_markup = partner_menu())
+	await callback.message.edit_text("При наличии предложений для сотрудничества, просьба обратиться по почте beststore@gmail.com или по номеру +7 789 066 2313. Наш оператор свяжется с вами в кратчайшие сроки.", reply_markup = main_menu(str(clientID)))
 
 
 
-@dp.callback_query_handler(cd.filter(action = "count"))
-async def count_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("Мои баллы: \
-									\n Вы пригласили : 6 человек.\
-									Начислено баллов 1200,00",reply_markup = partner_menu())
+#@dp.callback_query_handler(cd.filter(action = "count"))
+#async def count_cmd(callback:types.CallbackQuery):
+#	await callback.message.edit_text("Мои баллы: \
+#									\n Вы пригласили : 6 человек.\
+#									Начислено баллов 1200,00",reply_markup = partner_menu())
 
 @dp.callback_query_handler(cd.filter(action = "Поделиться"))
 async def share_cmd(callback:types.CallbackQuery):
 	await callback.message.edit_text('Расскажи друзьям в соц сетях: ',reply_markup = share_menu())
 
-@dp.callback_query_handler( cd.filter(action = "back_to_main"))
-@dp.callback_query_handler( cd.filter(action = "back_to_main"),state="*")
+@dp.callback_query_handler(cd.filter(action = "back_to_main"))
+@dp.callback_query_handler(cd.filter(action = "back_to_main"),state="*")
 async def back_cmd(callback:types.CallbackQuery, state: FSMContext):
 	global CURRENT_LEVEL
+	global clientID
 	CURRENT_LEVEL = 0
 	await state.finish()
 	await callback.message.edit_text("Вы вернулись в главное меню магазина!\n\
 		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(message.from_user.id)))
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
 
 
 @dp.callback_query_handler(cd.filter(action = "women"))
@@ -551,9 +549,10 @@ async def add_FSMprice(message:types.Message,state:FSMContext):
 	elif data['gender'] == "Женская":
 		sql_female(data)
 	await state.finish()
+	global clientID
 	await message.answer("Вы вернулись в главное меню магазина!\n\
 		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(message.from_user.id)))
+		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
 
 
 
@@ -622,11 +621,12 @@ async def FSM_delete_name(message:types.Message,state:FSMContext):
 	async with state.proxy() as data:
 		data["name"] = message.text
 		selectedONE = sql_ONEselect(data)
+		global clientID
 	try:
 		await bot.send_photo(message.from_user.id,selectedONE[1],caption = f"{data['name']}, \n{selectedONE[3]}",reply_markup = get_True())
 		await FSM_delete.next()
 	except TypeError:	
-		await message.answer("Товар не был найден", reply_markup = main_menu(str(message.from_user.id)))
+		await message.answer("Товар не был найден. \nВыберите интересующую вас функцию", reply_markup = main_menu(str(clientID)))
 		await state.finish()
 
 
@@ -636,13 +636,15 @@ async def cmd_yes(callback:types.CallbackQuery, state:FSMContext):
 	async with state.proxy() as data :
 		delete_something(data)
 	await callback.message.delete()
-	await callback.message.answer("Товар успешно удален",reply_markup = main_menu(str(message.from_user.id)))
+	global clientID
+	await callback.message.answer("Товар успешно удален. \nВыберите интересующую вас функцию",reply_markup = main_menu(str(clientID)))
 	await state.finish()
 
 @dp.callback_query_handler(cd.filter(action ="No"), state = FSM_delete.confirm)
 async def cmd_no(callback:types.CallbackQuery, state:FSMContext):
 	await callback.message.delete()
-	await callback.message.answer("Удаление товара было отменено",reply_markup = main_menu(str(message.from_user.id)))
+	global clientID
+	await callback.message.answer("Удаление товара было отменено. \nВыберите интересующую вас функцию",reply_markup = main_menu(str(clientID)))
 	await state.finish()
 
 
