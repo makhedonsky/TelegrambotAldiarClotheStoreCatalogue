@@ -3,12 +3,20 @@ from aiogram.utils.callback_data import CallbackData
 
 cd = CallbackData("Inline","action")
 
-def main_menu() -> InlineKeyboardMarkup:
-	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
-		[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
-		[InlineKeyboardButton("Помощь",callback_data = cd.new("help")),InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
-		[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product")),InlineKeyboardButton("Удалить товар",callback_data = cd.new("delete_goods"))]
-	])
+def main_menu(IDn) -> InlineKeyboardMarkup:
+	if IDn == '508361882':
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+			[InlineKeyboardButton("Помощь",callback_data = cd.new("help")),InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
+			[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product")),InlineKeyboardButton("Удалить товар",callback_data = cd.new("delete_goods"))]
+		])
+	else:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+			[InlineKeyboardButton("Помощь",callback_data = cd.new("help"))],
+			[InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
+			
+		])
 
 	return Inline
 
@@ -253,6 +261,9 @@ def add_accessoriesK() -> InlineKeyboardMarkup:
 
 	return Inline
 
+
+
+
 def Category() -> InlineKeyboardMarkup:
 	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
 		[InlineKeyboardButton("Обувь",callback_data = cd.new("Shoes"))],
@@ -268,4 +279,3 @@ def get_True():
 		[InlineKeyboardButton("Нет",callback_data = cd.new("No"))]
 	])
 	return Inline
-
