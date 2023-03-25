@@ -1,654 +1,283 @@
-from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher 
-from aiogram.utils import executor 
+from aiogram.types import InlineKeyboardMarkup,InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.dispatcher import FSMContext
-from inline import *
-from aldiarSQL import *
-import os 
-
-#TOKEN="5600509943:AAGPSdTH5HdffKE0u_YHXLEBPnsMlphnHvI"
-
-storage = MemoryStorage()
-#bot = Bot(token=TOKEN)
-bot = Bot(token=os.getenv('TOKEN'))
-dp = Dispatcher(bot,storage = storage)
-
-async def on_startup(_):
-	print("бот вошел в онлайн")
-
-HELP = """
-	Каталог - просмотр товаров в магазине,\n
-	Помощь - для ознакомления с функцианалом бота,\n
-	Партнерам - если есть предложение для сотрудничество,
-"""
-
-class FSM_admin(StatesGroup):
-	photo = State()
-	gender = State()
-	category1 = State()
-	category2 = State()
-	name = State()
-	price = State()
-
-class FSM_delete(StatesGroup):
-	gender = State()
-	category1 = State()
-	category2 = State()
-	name = State()
-	confirm = State()
-	
-	
-
-
-
-@dp.message_handler(commands = ["start"])
-async def start_cmd(message:types.Message):
-	global clientID
-	clientID = message.from_user.id
-	await message.answer("Добро пожаловать в главное меню магазина!\n\
-		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
-
-@dp.callback_query_handler(cd.filter(action = "help"))
-async def callback_help(callback:types.CallbackQuery):
-	await callback.message.edit_text(HELP,reply_markup=help_keyboard())
-
-@dp.callback_query_handler(cd.filter(action = "Каталог"))
-async def callback_Catalog(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = catalog_menu())
-
-@dp.callback_query_handler(cd.filter(action = "partner"))
-async def partner_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("При наличии предложений для сотрудничества, просьба обратиться по почте beststore@gmail.com или по номеру +7 789 066 2313. Наш оператор свяжется с вами в кратчайшие сроки.", reply_markup = main_menu(str(clientID)))
-
-
-
-#@dp.callback_query_handler(cd.filter(action = "count"))
-#async def count_cmd(callback:types.CallbackQuery):
-#	await callback.message.edit_text("Мои баллы: \
-#									\n Вы пригласили : 6 человек.\
-#									Начислено баллов 1200,00",reply_markup = partner_menu())
-
-@dp.callback_query_handler(cd.filter(action = "Поделиться"))
-async def share_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Расскажи друзьям в соц сетях: ',reply_markup = share_menu())
-
-@dp.callback_query_handler(cd.filter(action = "back_to_main"))
-@dp.callback_query_handler(cd.filter(action = "back_to_main"),state="*")
-async def back_cmd(callback:types.CallbackQuery, state: FSMContext):
-	global CURRENT_LEVEL
-	global clientID
-	CURRENT_LEVEL = 0
-	await state.finish()
-	await callback.message.edit_text("Вы вернулись в главное меню магазина!\n\
-		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
-
-
-@dp.callback_query_handler(cd.filter(action = "women"))
-async def women_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_category_menu())
-
-@dp.callback_query_handler(cd.filter(action = "men"))
-async def men_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_category_menu())
-
-@dp.callback_query_handler(cd.filter(action = "back_to_catalog"))
-async def men_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = catalog_menu())
-
-@dp.callback_query_handler(cd.filter(action = "bakc_to_partner"))
-async def men_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("За каждого приглашенного участника вы получаете 200 руб бонуса,которые вы впоследствии \
-							можете использовать для получения скидки на заказ. Для этого оправте ему копию партнерской \
-							ссылки из раздела \" Получить портнерскую ссылку \"Максимальная скидка но одну товарную позицию 1000р. \
-							При стоимость товорной позиции более 20 000р максиальная скидка 2000р ", reply_markup = partner_menu())
-
-@dp.callback_query_handler(cd.filter(action = "women_shoes"))
-async def women_shoes_menu_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Обувь'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_shoes_menu() )
-
-@dp.callback_query_handler(cd.filter(action = "men_shoes"))
-async def men_shoes_menu_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Обувь'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_shoes_menu() )
-
-@dp.callback_query_handler(cd.filter(action = "WomenOuterwear"))
-async def women_Outerwear_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Верхняя одежда'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_Outerwear() )
-
-@dp.callback_query_handler(cd.filter(action = "MenOuterwear"))
-async def men_Outerwear_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Верхняя одежда'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_Outerwear() )
-
-@dp.callback_query_handler(cd.filter(action = "WomenPants"))
-async def women_pants_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Штаны'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_pants() )	
-
-@dp.callback_query_handler(cd.filter(action = "MenPants"))
-async def men_pants_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Штаны'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_pants() )
-
-@dp.callback_query_handler(cd.filter(action = "WomenAccessories"))
-async def women_accessories_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Аксессуары'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = women_accessories() )	
-
-@dp.callback_query_handler(cd.filter(action = "MenAccessories"))
-async def men_accessories_cmd(callback:types.CallbackQuery):
-	global choise1category
-	choise1category = 'Аксессуары'
-	await callback.message.edit_text('Выберите категорию : ',reply_markup = men_accessories() )
-
-# ********************************************************************** women Обувь **************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "women_Кроссовки"))
-async def women_sneakers(callback:types.CallbackQuery):	
-	global res
-	res = sql_female_select(choise1category,"Кроссовки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Туфли"))
-async def women_heels(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Туфли")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Сандали"))
-async def women_sandals(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Сандали")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Сапоги"))
-async def women_boots(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Сапоги")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-# ********************************************************************** men Обувь **************************************************************************************
-
-@dp.callback_query_handler(cd.filter(action = "men_Кроссовки"))
-async def men_sneakers(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Кроссовки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Туфли"))
-async def men_heels(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Туфли")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Сандали"))
-async def men_sandals(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Сандали")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Сапоги"))
-async def man_boots(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Сапоги")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-# ********************************************************************** women Верхняя одежда **************************************************************************************
-
-@dp.callback_query_handler(cd.filter(action = "women_Куртки"))
-async def women_jackets(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Куртки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Кофты"))
-async def women_blouses(message:types.Message):
-	global res
-	res = sql_female_select(choise1category,"Кофты")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Свиторы"))
-async def women_sweaters(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Свиторы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Дождевик"))
-async def women_raincoats(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Дождевик")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-# ********************************************************************** men Верхняя одежда **************************************************************************************
-
-@dp.callback_query_handler(cd.filter(action = "men_Куртки"))
-async def men_jackets(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Куртки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-@dp.callback_query_handler(cd.filter(action = "men_Кофты"))#    THE ONLY WORKING HANDLER
-async def men_blouses(callback:types.CallbackQuery):
-  global res
-  res = sql_male_select(choise1category,"Кофты")
-  await callback.message.delete()
-  await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Свиторы"))
-async def men_sweaters(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Свиторы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Дождевик"))
-async def men_raincoats(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Дождевик")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-
-# ********************************************************************** men PANTS ************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "men_Трико"))
-async def men_tights(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Трико")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Джинсы"))
-async def men_jeans(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Джинсы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Лосины"))
-async def men_leggings(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Лосины")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Классические брюки"))
-async def men_classic_pants(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Классические брюки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-
-
-# ********************************************************************** women PANTS ************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "women_Трико"))
-async def women_tights(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Трико")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Джинсы"))
-async def women_jeans(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Джинсы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "women_Лосины"))
-async def women_leggings(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Лосины")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+cd = CallbackData("Inline","action")
+
+def main_menu(IDn) -> InlineKeyboardMarkup:
+	if IDn == '508361882':
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+			[InlineKeyboardButton("Помощь",callback_data = cd.new("help")),InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
+			[InlineKeyboardButton("Поделиться",callback_data = cd.new("Поделиться"))],
+			[InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_product")),InlineKeyboardButton("Удалить товар",callback_data = cd.new("delete_goods"))]
+		])
+	else:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+			[InlineKeyboardButton("Помощь",callback_data = cd.new("help"))],
+			[InlineKeyboardButton("Партнерам",callback_data = cd.new("partner"))],
+			[InlineKeyboardButton("Поделиться",callback_data = cd.new("Поделиться"))]
+			
+		])
+
+	return Inline
+
+def help_keyboard() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Каталог",callback_data = cd.new("Каталог"))],
+		[InlineKeyboardButton("Партнерам",callback_data = cd.new("partner")),InlineKeyboardButton("Опубликовать товар",callback_data = cd.new("new_goods"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new("back_to_main"))]
+	])
+
+	return Inline
+
+#def partner_menu() -> InlineKeyboardMarkup:
+#	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+#		[InlineKeyboardButton("Мои баллы",callback_data = cd.new("count"))],
+#		[InlineKeyboardButton("Запросить скидку",callback_data = cd.new("discount")),InlineKeyboardButton("Поделиться",callback_data = cd.new("Поделиться"))],
+#		[InlineKeyboardButton("Назад",callback_data = cd.new("back_to_main"))]
+#	])
+
+#	return Inline
+
+def share_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(inline_keyboard = [
+		[InlineKeyboardButton("Рассказать друзьям VK","https://vk.com/english_russian_language_exchang")],
+		[InlineKeyboardButton("Рассказать друзьям Telegam","https://web.telegram.org/k/")],
+		[InlineKeyboardButton("Рассказать друзьям Facebook","https://ru-ru.facebook.com/")],
+		[InlineKeyboardButton("Рассказать друзьям Twitter","https://twitter.com/?lang=ru")],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+
+def catalog_menu() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Женская",callback_data = cd.new('women'))],
+		[InlineKeyboardButton("Мужская",callback_data = cd.new('men'))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+
+
+def women_category_menu()->InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("women_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("WomenOuterwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("WomenPants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("WomenAccessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_category_menu()->InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("men_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("MenOuterwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("MenPants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("MenAccessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_shoes_menu() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("women_Кроссовки") )],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("women_Туфли") )],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("women_Сандали") )],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("women_Сапоги") )],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_shoes_menu() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("men_Кроссовки"))],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("men_Туфли"))],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("men_Сандали"))],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("men_Сапоги"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
 
-@dp.callback_query_handler(cd.filter(action = "women_Классические брюки"))
-async def women_classic_pants(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Классические брюки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
+	return Inline
 
+def women_Outerwear() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("women_Куртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("women_Кофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("women_Свиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("women_Дождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('women_back_to_catalog'))]	
+	])
 
+	return Inline
 
+def men_Outerwear() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("men_Куртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("men_Кофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("men_Свиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("men_Дождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('men_back_to_catalog'))]
+	])
 
-# ********************************************************************** men ACCESSORIES ************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "men_Очки"))
-async def men_glasses(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Очки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Часы"))
-async def men_watches(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Часы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Сумки"))
-async def men_bags(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Сумки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "men_Кольцо"))
-async def men_ring(callback:types.CallbackQuery):
-	global res
-	res = sql_male_select(choise1category,"Кольцо")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-
-# ********************************************************************** women ACCESSORIES ************************************************************************************
-
-
-@dp.callback_query_handler(cd.filter(action = "women_Очки"))
-async def women_glasses(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Очки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Часы"))
-async def women_watches(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Часы")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Сумки"))
-async def women_bags(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Сумки")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "women_Кольцо"))
-async def women_ring(callback:types.CallbackQuery):
-	global res
-	res = sql_female_select(choise1category,"Кольцо")
-	await callback.message.delete()
-	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-CURRENT_LEVEL = 0
-
-
-@dp.callback_query_handler(cd.filter(action = "Следующий"))
-async def next_product(callback:types.CallbackQuery):
-	global CURRENT_LEVEL
-	CURRENT_LEVEL = CURRENT_LEVEL + 1
-	print(len(res), '	res')
-	print(CURRENT_LEVEL, '	CURRENT_LEVEL')
-	await callback.message.edit_media(types.InputMedia(media = res[CURRENT_LEVEL][1], type = 'photo', caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}'),reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "Предыдущий"))
-async def previous_product(callback:types.CallbackQuery):
-	global CURRENT_LEVEL
-	CURRENT_LEVEL = CURRENT_LEVEL - 1
-	await callback.message.edit_media(types.InputMedia(media = res[CURRENT_LEVEL][1], type = 'photo', caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}'),reply_markup = things(len(res),CURRENT_LEVEL))
-
-@dp.callback_query_handler(cd.filter(action = "back_from_things"))
-async def callback_Catalog(callback:types.CallbackQuery):
-	await callback.message.delete()
-	await callback.message.answer('Выберите категорию : ',reply_markup = catalog_menu())
-
-
-
-
-
-
-
-
-
-
-
-#####################################################################		ADD PRODUCTS	#################################
-
-
-@dp.callback_query_handler(cd.filter(action = 'new_product'))
-async def new_product_cmd(callback:types.Message):
-	await callback.message.answer('Отправьте изображение товара ')
-	await FSM_admin.photo.set()
-
-@dp.message_handler(lambda message: not message.photo,state = FSM_admin.photo)
-async def add_FSMphoto_check(message:types.Message):
-	await message.answer("Ошибка. Отправьте изображение.")
-
-@dp.message_handler(lambda message: message.photo,content_types = ['photo'],state = FSM_admin.photo)
-async def add_FSMphoto(message:types.Message,state:FSMContext):
-	async with state.proxy() as data:
-		data["photo"] = message.photo[0].file_id	
-	await message.answer("Выберите одежда для какого пола",reply_markup = men_women())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_admin.gender)
-async def add_FSMcategory_women(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = "Женская"
-	await callback.message.edit_text("Выберите категорию одежды",reply_markup = add_categoryK())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_admin.gender)
-async def add_FSMcategory_men(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = "Мужская"
-	await callback.message.edit_text("Выберите категорию одежды", reply_markup = add_categoryK())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_shoes"), state = FSM_admin.category1)
-async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Обувь"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_shoesK())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_outerwear"), state = FSM_admin.category1)
-async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Верхняя одежда"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_outerwearK())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_pants"), state = FSM_admin.category1)
-async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Штаны"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_pantsK())
-	await FSM_admin.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_accessories"), state = FSM_admin.category1)
-async def add_FSMcategory1(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Аксессуары"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_accessoriesK())
-	await FSM_admin.next()
-
-
-@dp.callback_query_handler(state = FSM_admin.category2)
-async def add_FSMcategory2(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category2"] = callback.data[10:]
-	await callback.message.answer("Введите название товара")
-	await FSM_admin.next()
-
-@dp.message_handler(lambda message: message.text, content_types = ['text'], state = FSM_admin.name)
-async def add_FSMname(message:types.Message,state:FSMContext):
-	async with state.proxy() as data:
-		data["name"] = message.text
-	await message.answer("Введите стоимость товара")
-	await FSM_admin.next()
-
-@dp.message_handler(lambda message: message.text, content_types = ['text'], state = FSM_admin.price)
-async def add_FSMprice(message:types.Message,state:FSMContext):
-	async with state.proxy() as data:
-		data["price"] = message.text
-	if data['gender'] == "Мужская":
-		sql_male(data)
-	elif data['gender'] == "Женская":
-		sql_female(data)
-	await state.finish()
-	global clientID
-	await message.answer("Вы вернулись в главное меню магазина!\n\
-		Мы продаем только в люксовом качестве \n\
-		По вопросам по использованию бота можете написать на номер 8-777-77-77",reply_markup = main_menu(str(clientID)))
-
-
-
-
-
-
-###################################################################	  DELETE PRODUCT   #######################################################
-@dp.callback_query_handler(cd.filter(action = 'delete_goods'))
-async def new_product_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("Выберите одежда для какого пола",reply_markup = men_women())
-	await FSM_delete.gender.set()
-
-@dp.callback_query_handler(cd.filter(action = "Женская"),state = FSM_delete.gender)
-async def FSM_delete_women(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = "Женская"
-	await callback.message.edit_text("Выберите категорию одежды",reply_markup = add_categoryK())
-	print('1')
-	await FSM_delete.next()
-
-@dp.callback_query_handler(cd.filter(action = "Мужская"),state = FSM_delete.gender)
-async def FSM_delete_men(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["gender"] = "Мужская"
-	await callback.message.edit_text("Выберите категорию одежды", reply_markup = add_categoryK())
-	await FSM_delete.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_shoes"), state = FSM_delete.category1)
-async def FSM_delete_shoes(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Shoes"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_shoesK())
-	await FSM_delete.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_outerwear"), state = FSM_delete.category1)
-async def FSM_delete_outerwear(callback:types.CallbackQuery,state:FSMContext):
-	print('2')
-	async with state.proxy() as data:
-		data["category1"] = "Outerwear"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_outerwearK())
-	await FSM_delete.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_pants"), state = FSM_delete.category1)
-async def FSM_delete_pants(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Pants"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_pantsK())
-	await FSM_delete.next()
-
-@dp.callback_query_handler(cd.filter(action = "add_accessories"), state = FSM_delete.category1)
-async def FSM_delete_accessories(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category1"] = "Accessories"
-	await callback.message.edit_text("Выберите тип одежды",reply_markup = add_accessoriesK())
-	await FSM_delete.next()
-
-@dp.callback_query_handler(state = FSM_delete.category2)
-async def FSM_delete_category2(callback:types.CallbackQuery,state:FSMContext):
-	async with state.proxy() as data:
-		data["category2"] = callback.data[10:]
-	await callback.message.answer("Введите название товара")
-	await FSM_delete.next()
-
-@dp.message_handler(state = FSM_delete.name)
-async def FSM_delete_name(message:types.Message,state:FSMContext):
-	async with state.proxy() as data:
-		data["name"] = message.text
-		selectedONE = sql_ONEselect(data)
-		global clientID
-	try:
-		await bot.send_photo(message.from_user.id,selectedONE[1],caption = f"{data['name']}, \n{selectedONE[3]}",reply_markup = get_True())
-		await FSM_delete.next()
-	except TypeError:	
-		await message.answer("Товар не был найден. \nВыберите интересующую вас функцию", reply_markup = main_menu(str(clientID)))
-		await state.finish()
-
-
-
-@dp.callback_query_handler(cd.filter(action = "Yes"), state = FSM_delete.confirm)
-async def cmd_yes(callback:types.CallbackQuery, state:FSMContext):
-	async with state.proxy() as data :
-		delete_something(data)
-	await callback.message.delete()
-	global clientID
-	await callback.message.answer("Товар успешно удален. \nВыберите интересующую вас функцию",reply_markup = main_menu(str(clientID)))
-	await state.finish()
-
-@dp.callback_query_handler(cd.filter(action ="No"), state = FSM_delete.confirm)
-async def cmd_no(callback:types.CallbackQuery, state:FSMContext):
-	await callback.message.delete()
-	global clientID
-	await callback.message.answer("Удаление товара было отменено. \nВыберите интересующую вас функцию",reply_markup = main_menu(str(clientID)))
-	await state.finish()
-
-
-##########################################################################################################################
-
-if __name__ == "__main__":
-	executor.start_polling(dp,on_startup = on_startup)
+	return Inline
+
+def women_pants() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("women_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("women_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("women_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline	
+
+def men_pants() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("men_Трико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("men_Джинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("men_Лосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("men_Классические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def men_accessories() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("men_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("men_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("men_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("men_Кольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+def women_accessories() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("women_Очки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("women_Часы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("women_Сумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("women_Кольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_catalog'))]
+	])
+
+	return Inline
+
+
+
+def things(border,level) -> InlineKeyboardMarkup:
+	if 0 < level < border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == 0:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Следующий", callback_data = cd.new("Следующий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	elif level == border-1:
+		Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+			[InlineKeyboardButton("Предыдущий", callback_data = cd.new("Предыдущий") )],	
+			[InlineKeyboardButton("Назад", callback_data = cd.new("back_from_things"))],	
+		])
+
+	return Inline
+
+
+
+
+
+
+
+
+
+#########################################	PRODUCT ADD KEYBOARD   ####################################
+
+def men_women() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton('Женская',callback_data = cd.new("Женская"))],
+		[InlineKeyboardButton('Мужская',callback_data = cd.new("Мужская"))]
+	])
+	return Inline
+
+def add_categoryK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("add_shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("add_outerwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("add_pants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("add_accessories"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+	return Inline
+
+def add_shoesK() -> InlineKeyboardMarkup:
+	Inline  = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [	
+		[InlineKeyboardButton("Кроссовки",callback_data = cd.new("AddКроссовки"))],
+		[InlineKeyboardButton("Туфли",callback_data = cd.new("AddТуфли"))],
+		[InlineKeyboardButton("Сандали",callback_data = cd.new("AddСандали"))],
+		[InlineKeyboardButton("Сапоги",callback_data = cd.new("AddСапоги"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]	
+	])
+
+	return Inline
+def add_outerwearK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Куртки", callback_data = cd.new("AddКуртки") )],
+		[InlineKeyboardButton("Кофты", callback_data = cd.new("AddКофты") )],	
+		[InlineKeyboardButton("Свиторы", callback_data = cd.new("AddСвиторы"))],	
+		[InlineKeyboardButton("Дождевик",callback_data = cd.new("AddДождевик"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+def add_pantsK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Трико", callback_data = cd.new("AddТрико") )],
+		[InlineKeyboardButton("Джинсы", callback_data = cd.new("AddДжинсы") )],	
+		[InlineKeyboardButton("Лосины", callback_data = cd.new("AddЛосины"))],	
+		[InlineKeyboardButton("Классические брюки",callback_data = cd.new("AddКлассические брюки"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+def add_accessoriesK() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Очки", callback_data = cd.new("AddОчки") )],
+		[InlineKeyboardButton("Часы", callback_data = cd.new("AddЧасы") )],	
+		[InlineKeyboardButton("Сумки", callback_data = cd.new("AddСумки"))],	
+		[InlineKeyboardButton("Кольцо",callback_data = cd.new("AddКольцо"))],
+		[InlineKeyboardButton("Назад",callback_data = cd.new('back_to_main'))]
+	])
+
+	return Inline
+
+
+
+
+def Category() -> InlineKeyboardMarkup:
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Обувь",callback_data = cd.new("Shoes"))],
+		[InlineKeyboardButton("Верхняя одежда",callback_data = cd.new("Outerwear"))],
+		[InlineKeyboardButton("Штаны",callback_data = cd.new("Pants"))],
+		[InlineKeyboardButton("Аксессуары",callback_data = cd.new("Accessories"))],
+	])
+	return Inline
+
+def get_True():
+	Inline = InlineKeyboardMarkup(row_width = 2,inline_keyboard = [
+		[InlineKeyboardButton("Да",callback_data = cd.new("Yes"))],
+		[InlineKeyboardButton("Нет",callback_data = cd.new("No"))]
+	])
+	return Inline
