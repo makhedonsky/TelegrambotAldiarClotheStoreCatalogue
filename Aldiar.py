@@ -100,12 +100,12 @@ async def men_cmd(callback:types.CallbackQuery):
 async def men_cmd(callback:types.CallbackQuery):
 	await callback.message.edit_text('Выберите категорию : ',reply_markup = catalog_menu())
 
-@dp.callback_query_handler(cd.filter(action = "bakc_to_partner"))
-async def men_cmd(callback:types.CallbackQuery):
-	await callback.message.edit_text("За каждого приглашенного участника вы получаете 200 руб бонуса,которые вы впоследствии \
-							можете использовать для получения скидки на заказ. Для этого оправте ему копию партнерской \
-							ссылки из раздела \" Получить портнерскую ссылку \"Максимальная скидка но одну товарную позицию 1000р. \
-							При стоимость товорной позиции более 20 000р максиальная скидка 2000р ", reply_markup = partner_menu())
+#@dp.callback_query_handler(cd.filter(action = "bakc_to_partner"))
+#async def men_cmd(callback:types.CallbackQuery):
+#	await callback.message.edit_text("За каждого приглашенного участника вы получаете 200 руб бонуса,которые вы впоследствии \
+#							можете использовать для получения скидки на заказ. Для этого оправте ему копию партнерской \
+##							ссылки из раздела \" Получить портнерскую ссылку \"Максимальная скидка но одну товарную позицию 1000р. \
+#							При стоимость товорной позиции более 20 000р максиальная скидка 2000р ", reply_markup = partner_menu())
 
 @dp.callback_query_handler(cd.filter(action = "women_shoes"))
 async def women_shoes_menu_cmd(callback:types.CallbackQuery):
@@ -233,10 +233,10 @@ async def women_blouses(message:types.Message):
 	await callback.message.delete()
 	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "women_Свиторы"))
+@dp.callback_query_handler(cd.filter(action = "women_Свитера"))
 async def women_sweaters(callback:types.CallbackQuery):
 	global res
-	res = sql_female_select(choise1category,"Свиторы")
+	res = sql_female_select(choise1category,"Свитера")
 	await callback.message.delete()
 	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
@@ -265,10 +265,10 @@ async def men_blouses(callback:types.CallbackQuery):
   await callback.message.delete()
   await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
-@dp.callback_query_handler(cd.filter(action = "men_Свиторы"))
+@dp.callback_query_handler(cd.filter(action = "men_Свитера"))
 async def men_sweaters(callback:types.CallbackQuery):
 	global res
-	res = sql_male_select(choise1category,"Свиторы")
+	res = sql_male_select(choise1category,"Свитера")
 	await callback.message.delete()
 	await bot.send_photo(callback.message.chat.id, res[CURRENT_LEVEL][1], caption = f'{res[CURRENT_LEVEL][2]} \n{res[CURRENT_LEVEL][3]}',reply_markup = things(len(res),CURRENT_LEVEL))
 
